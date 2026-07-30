@@ -1,0 +1,39 @@
+name: GitHub MCP Test Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Display Python Version
+        run: python --version
+
+      - name: Install Dependencies
+        run: |
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
+
+      - name: Run Application
+        run: |
+          if [ -f app.py ]; then
+            python app.py
+          fi
+
+      - name: Workflow Completed
+        run: echo "GitHub Actions executed successfully."
