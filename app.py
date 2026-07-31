@@ -1,1 +1,5 @@
-print("Hello from GitHub MCP Test Repository")
+from fastapi import FastAPI
+
+app = FastAPI()
+
+print("Application started")
