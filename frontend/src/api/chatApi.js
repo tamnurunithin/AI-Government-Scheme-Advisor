@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://ai-government-scheme-advisor-33ecvqabg-tamnurunithins-projects.vercel.app/",
+  baseURL: "https://ai-government-scheme-advisor-lai3.onrender.com",
 });
 
 export const askQuestion = async (question) => {
