@@ -19,7 +19,7 @@ origins = [
     "http://127.0.0.1:5173",
 
     # Production frontend deployed on Vercel
-    "https://ai-government-scheme-advisor-five.vercel.app/",
+    "https://ai-government-scheme-advisor-pytp4duxv-tamnurunithins-projects.vercel.app/",
 ]
 
 
