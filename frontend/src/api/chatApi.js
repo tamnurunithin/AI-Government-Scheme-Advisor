@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://govassist-backend-ykkx.onrender.com",
+  baseURL: "https://ai-government-scheme-advisor-lai3.onrender.com",
 });
 
 export const askQuestion = async (question) => {
