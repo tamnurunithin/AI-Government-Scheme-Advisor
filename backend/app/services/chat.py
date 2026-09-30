@@ -1,19 +1,35 @@
 from groq import Groq
 
-from app.core.config import GROQ_API_KEY
+from app.core.config import GROQ_API_KEY, GROQ_MODEL
 from app.services.retriever import retrieve_documents
 
 
-# Initialize Groq client
+# ==========================================================
+# Initialize Groq Client
+# ==========================================================
+
+if not GROQ_API_KEY:
+    raise ValueError(
+        "GROQ_API_KEY is missing. "
+        "Add it to backend/.env locally or Render Environment Variables."
+    )
+
 client = Groq(api_key=GROQ_API_KEY)
 
 
+# ==========================================================
+# Build Prompt
+# ==========================================================
+
 def build_prompt(question, documents):
     """
-    Build a prompt using the retrieved documents and user question.
+    Build a prompt using the retrieved documents
+    and the user's question.
     """
 
-    context = "\n\n".join([doc.page_content for doc in documents])
+    context = "\n\n".join(
+        [doc.page_content for doc in documents]
+    )
 
     prompt = f"""
 You are GovAssist AI, an intelligent Government Scheme Advisor.
@@ -90,28 +106,48 @@ Generate the answer now.
     return prompt
 
 
+# ==========================================================
+# Generate Answer
+# ==========================================================
+
 def generate_answer(question):
     """
-    Generate an answer using Groq and the retrieved documents.
+    Generate an answer using retrieved documents
+    and the Groq LLM.
     """
 
+    # ------------------------------------------------------
     # Step 1: Retrieve relevant documents
+    # ------------------------------------------------------
+
     documents = retrieve_documents(question)
 
-    # Step 2: Build the prompt
-    prompt = build_prompt(question, documents)
+    # ------------------------------------------------------
+    # Step 2: Build prompt
+    # ------------------------------------------------------
 
-    print("\n🔄 Sending request to Groq...\n")
+    prompt = build_prompt(
+        question,
+        documents
+    )
 
+    print("\n🔄 Sending request to Groq...")
+    print(f"🤖 Groq Model: {GROQ_MODEL}\n")
+
+    # ------------------------------------------------------
     # Step 3: Call Groq API
+    # ------------------------------------------------------
+
     response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
+        model=GROQ_MODEL,
         messages=[
             {
                 "role": "system",
                 "content": (
-                    "You are GovAssist AI, a helpful Government Scheme Advisor. "
-                    "Answer only using the provided context and respond in clean Markdown."
+                    "You are GovAssist AI, a helpful "
+                    "Government Scheme Advisor. "
+                    "Answer only using the provided context "
+                    "and respond in clean Markdown."
                 ),
             },
             {
@@ -122,14 +158,25 @@ def generate_answer(question):
         temperature=0.2,
     )
 
+    # ------------------------------------------------------
+    # Step 4: Extract Answer
+    # ------------------------------------------------------
+
     answer = response.choices[0].message.content
 
     return answer
 
 
+# ==========================================================
+# Local Testing
+# ==========================================================
+
 if __name__ == "__main__":
 
-    question = "Who is eligible for Chief Minister's Overseas Scholarship?"
+    question = (
+        "Who is eligible for Chief Minister's "
+        "Overseas Scholarship?"
+    )
 
     answer = generate_answer(question)
 
